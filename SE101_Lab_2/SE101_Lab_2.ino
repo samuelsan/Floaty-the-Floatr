@@ -33,7 +33,6 @@ char wallBMP[] = {
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 int charX, charY;
-int controlMode;
 
 int startX = 6;
 int startY = 60;
@@ -52,8 +51,6 @@ int wallWidth = 2;
 
 char chPwrCtlReg = 0x2d;
 char chX0Addr = 0x32;
-char chY0Addr = 0x34;
-char chZ0Addr = 0x36;
 
 char rgchWriteAccl[] = {
   0,0};
@@ -209,7 +206,7 @@ void loop()
           wallX[i] = wallY[i] = wallHeight[i] = -1;
         } 
         else {
-          setCursor(wallX[i], wallY[i], wallWidth);
+          setCursor(wallX[i] - wallWidth, wallY[i], wallWidth);
           OrbitOledPutBmp(wallHeight[i], wallWidth, wallBMP);
         }
         if(wallX[i] <= charX + 6){
@@ -230,7 +227,7 @@ void loop()
 }
 
 int getCharVelocity(){
-  if(controlMode == 0){
+  if(getControlMode() == 0){
     rgchReadAccl[0] = chX0Addr;
 
     I2CGenTransmit(rgchReadAccl,2, READ, ACCLADDR);
@@ -240,7 +237,7 @@ int getCharVelocity(){
     return (int) dataX * accelConstant;
   } 
   else {
-    return -1;
+    return 0;
   }
 
 }
@@ -393,6 +390,19 @@ char I2CGenTransmit(char * pbData, int cSize, bool fRW, char bAddr) {
 bool I2CGenIsNotIdle() {
 
   return !I2CMasterBusBusy(I2C0_BASE);
+
+}
+
+char getControlMode() {
+  long lSwt1;
+  
+  chSwtPrev = chSwtCur;
+
+  lSwt1 = GPIOPinRead(SWT1Port, SWT1);
+  
+  
+
+  return (char) lSwt1;
 
 }
 
