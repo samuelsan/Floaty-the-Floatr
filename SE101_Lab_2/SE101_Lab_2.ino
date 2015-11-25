@@ -9,8 +9,8 @@ extern "C" {
 #include <OrbitOledGrph.h>
 }
 
-#define LED RED_LED
-#define LED2 GREEN_LED
+#define LEDred RED_LED
+#define LEDgreen GREEN_LED
 
 char gameOverBMP[] = {
 
@@ -853,6 +853,8 @@ int gameRun;
 void setup()
 {
 
+   pinMode(LEDred, OUTPUT);
+   pinMode(LEDgreen, OUTPUT);
   /*
    * First, Set Up the Clock.
    * Main OSC		  -> SYSCTL_OSC_MAIN
@@ -1044,15 +1046,27 @@ void loop()
           setCursor(wallX[i] - wallWidth, wallY[i], wallWidth);
           OrbitOledPutBmp(wallHeight[i], wallWidth, wallBMP);
         }
+        //green light blinks every time floaty passes a wall code
+        if(wallX[i] == 31){
+          digitalWrite(LEDgreen, HIGH);
+          delay(10);
+          digitalWrite(LEDgreen, LOW);
+        }
+        //collision code
+        if(charY == 128 || charY == 6){
+          gameRun = 0;
+          digitalWrite(LEDred, HIGH);
+        }
         if(wallX[i] <= charX + 6){
-          if(charY <= wallY[i] && charY >= wallY[i] - wallHeight[i]){
+          if(charY <= wallY[i] && charY >= (wallY[i] - wallHeight[i])){
             gameRun = 0;
+            digitalWrite(LEDred, HIGH);
           }
         }
       }
     }
 
-    wallCountdown--;
+    wallCountdown--;   
     OrbitOledUpdate();
     delay(50);
     OrbitOledClear();
@@ -1061,12 +1075,13 @@ void loop()
   OrbitOledSetCursor(0,0);
   OrbitOledPutBmp(128, 32, gameOverBMP);
   OrbitOledUpdate();
-  digitalWrite(LED, HIGH);
+  digitalWrite(LEDgreen, LOW);
+
   delay(100);
 }
 
 int getCharVelocity(){
-  if(getControlMode() == 0){
+//  if(getControlMode() == 0){
     rgchReadAccl[0] = chX0Addr;
 
     I2CGenTransmit(rgchReadAccl,2, READ, ACCLADDR);
@@ -1074,10 +1089,10 @@ int getCharVelocity(){
     short dataX = (rgchReadAccl[2] <<8) | rgchReadAccl[1];
 
     return (int) dataX * accelConstant;
-  } 
-  else {
-    return 0;
-  }
+//  } 
+//  else {
+//    return 0;
+//  }
 
 }
 
@@ -1232,18 +1247,18 @@ bool I2CGenIsNotIdle() {
 
 }
 
-char getControlMode() {
-  long lSwt1;
-  
-  //chSwtPrev = chSwtCur;
-
-  lSwt1 = GPIOPinRead(SWT1Port, SWT1);
-  
-  
-
-  return (char) lSwt1;
-
-}
-
+//char getControlMode() {
+//  long lSwt1;
+//  
+//  //chSwtPrev = chSwtCur;
+//
+//  lSwt1 = GPIOPinRead(SWT1Port, SWT1);
+//  
+//  
+//
+//  return (char) lSwt1;
+//
+//}
+//commit
 
 
