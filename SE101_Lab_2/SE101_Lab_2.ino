@@ -822,6 +822,7 @@ char one [] = {
 
 
 int charX, charY;
+int counter;
 
 int startX = 6;
 int startY = 60;
@@ -970,52 +971,54 @@ void setup()
 void loop()
 { 
   if (gameRun){
-    OrbitOledClear();
-    OrbitOledSetCursor(0,0);
-    OrbitOledPutBmp(128, 32, welcome);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, to);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, floaties);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, the);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, floatr);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, five);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, four);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, three);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, two);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, one);
-    OrbitOledUpdate();
-    delay(500);
-    OrbitOledClear();
-    OrbitOledPutBmp(128, 32, go);
-    OrbitOledUpdate();
-    delay(500);
+//    OrbitOledClear();
+//    OrbitOledSetCursor(0,0);
+//    OrbitOledPutBmp(128, 32, welcome);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, to);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, floaties);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, the);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, floatr);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, five);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, four);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, three);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, two);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, one);
+//    OrbitOledUpdate();
+//    delay(500);
+//    OrbitOledClear();
+//    OrbitOledPutBmp(128, 32, go);
+//    OrbitOledUpdate();
+//    delay(500);
+      counter = 0;
   }
+  
   while(gameRun){
     charY += getCharVelocity();
     if(charY >=128 ){
@@ -1027,7 +1030,7 @@ void loop()
     setCursor(charX,charY,4);
     OrbitOledPutBmp(4,4, wallBMP);
     if(wallCountdown == 0){
-      wallHeight[wallIndexCounter] = random(60,110);
+      wallHeight[wallIndexCounter] = random(60,100);
       wallX[wallIndexCounter] = 32;
       wallY[wallIndexCounter] = random(wallHeight[wallIndexCounter],128);
       wallCountdown = 25;
@@ -1048,6 +1051,7 @@ void loop()
         }
         //green light blinks every time floaty passes a wall code
         if(wallX[i] == 31){
+          counter++;
           digitalWrite(LEDgreen, HIGH);
           delay(10);
           digitalWrite(LEDgreen, LOW);
@@ -1066,7 +1070,7 @@ void loop()
       }
     }
 
-    wallCountdown--;   
+    wallCountdown = wallCountdown -1;   
     OrbitOledUpdate();
     delay(50);
     OrbitOledClear();
@@ -1074,6 +1078,11 @@ void loop()
   OrbitOledClear();
   OrbitOledSetCursor(0,0);
   OrbitOledPutBmp(128, 32, gameOverBMP);
+  
+  
+  char score[] = "Score: ";
+  sprintf(score, "%d", counter-1);
+  OrbitOledPutString(score);
   OrbitOledUpdate();
   digitalWrite(LEDgreen, LOW);
 
